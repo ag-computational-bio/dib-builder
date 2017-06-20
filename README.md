@@ -2,9 +2,16 @@
 
 The dib-builder is a collection of scripts that build and deploy cloud images based on a configuration file.
 
+## How to add the dib-builder to your project
+
+~~~~bash
+git submodule add git@git.computational.bio.uni-giessen.de:deNBI-Cloud/dib-builder.git
+sed -i 's#git@git.computational.bio.uni-giessen.de:#../../#' .gitmodules
+~~~~
+
 ## Proposed structure of a image source repository
 
-* config.yml 
+* config.yml (Required)
 
 ~~~~yaml
 # The name of the cloud image will be created from the name and the version.
@@ -62,7 +69,7 @@ build:
         - dib
         - cloud
     script:
-        - ./build.py
+        - dib-builder/build.py
 ~~~~
 
 * README.md - A technical documentation of the image
