@@ -55,10 +55,11 @@ if elements:
 
 sys.stderr.write("setting environment variable...\n")
 # Execute diskimage builder
-if 'ELEMENTS_PATH' in os.environ:
-    os.environ['ELEMENTS_PATH'] = os.getcwd() + '/elements:' + os.environ['ELEMENTS_PATH']
-else:
-    os.environ['ELEMENTS_PATH'] = os.getcwd() + '/elements'
+if os.path.isdir(os.getcwd()+'/elements'):
+  if 'ELEMENTS_PATH' in os.environ:
+      os.environ['ELEMENTS_PATH'] = os.getcwd() + '/elements:' + os.environ['ELEMENTS_PATH']
+  else:
+      os.environ['ELEMENTS_PATH'] = os.getcwd() + '/elements'
     
 os.environ["LANG"] = "en_US.UTF-8"
 
