@@ -39,7 +39,7 @@ maintainers = config['maintainers']
 
 cli = 'openstack image create --disk-format qcow2 --file ' + image_file
 cli += ' --property version="' + config['version'] + '"'
-cli += ' --property name="' + config['name'] + '"'
+cli += ' --property image_name="' + config['name'] + '"'
 cli += ' --property upload_date="' + now.isoformat() + '"'
 if ram:
     cli += ' --min-ram ' + str(ram)
