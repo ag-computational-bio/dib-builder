@@ -32,7 +32,7 @@ The resulting image will be stored in the `target/` subdirectory.
 To deploy an image, load the openrc file for your cloud project, go to the
 directory containing the config.yaml, build it and then execute::
 
-  dibt-build
+  dibt-deploy
 
 The image will be uploaded and several properties will be set, based on the
 contents of the config.yaml file.
