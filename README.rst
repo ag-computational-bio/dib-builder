@@ -1,75 +1,98 @@
-# dib-builder
+dib-builder
+===========
 
-The dib-builder is a collection of scripts that build and deploy cloud images based on a configuration file.
+The dib-builder is an abstraction on top of the diskimage builder. It adds a
+simple config file for image definition, including additional metadata like
+maintainers, versioning and so on. It comes with two commands:
 
-## How to add the dib-builder to your project
+* dibt-build - builds the image
+* dibt-deploy - uploads the build image to an openstack project
 
-~~~~bash
-git submodule add git@git.computational.bio.uni-giessen.de:deNBI-Cloud/dib-builder.git
-sed -i 's#git@git.computational.bio.uni-giessen.de:#../../#' .gitmodules
-~~~~
 
-## Proposed structure of a image source repository
+Installation
+------------
 
-* config.yml (Required)
+Installation, including all dependencies works via pip::
 
-~~~~yaml
-# The name of the cloud image will be created from the name and the version.
-name: docker
-version: 1.0.0
-maintainers: [Lukas Jelonek - lukas.jelonek@computational.bio.uni-giessen.de]
+    git clone git@git.computational.bio.uni-giessen.de:deNBI-Cloud/dib-builder.git
+    cd dib-builder
+    pip3 install .
 
-# The description will be used for generated websites
-description: An ubuntu image that contains a ready to use docker daemon
-# A list of installed tools worth mentioning.
-# Will be used as documentation, e.g. on a homepage
-tools: [docker]
 
-# A list of tags to classify images.
-tags: [server, docker]
+Usage
+-----
 
-# Information needed for the execution of diskimage-builder
-dib:
-    # architecture of the image
-    architecture: amd64
-    # list of elements to include in the image
-    elements: [ubuntu, vm, latest-docker]
-    # package names that should be installed, -p in dib
-    packages: []
+To build an image, go to the directory containing the config.yaml file and
+execute::
 
-# Information needed for image deployment
-deploy:
-    # RAM requirements in MB
-    min_ram: 512
-    # Disk requirements in GB
-    min_hd: 4
-~~~~
+  dibt-build
 
-* elements - git subrepository to dib elements source
-* dib-builder - git subrepository to this Project
-* .gitignore
+The resulting image will be stored in the `target/` subdirectory.
 
-~~~~
-target/
-~~~~
+To deploy an image, load the openrc file for your cloud project, go to the
+directory containing the config.yaml, build it and then execute::
 
-* .gitlab-ci.yml 
+  dibt-build
 
-~~~~yaml
-before_script:
-    - git submodule sync --recursive
-    - git submodule update --init --recursive
+The image will be uploaded and several properties will be set, based on the
+contents of the config.yaml file.
 
-stages:
-    - build
 
-build:
-    stage: build
-    tags:
-        - dib
-        - cloud
-    script:
-        - dib-builder/build.py
-~~~~
+Structure an image definition
+-----------------------------
 
-* README.md - A technical documentation of the image
+* elements directory containing all additional elements to include into the
+  diskimage builder build
+* config.yaml::
+
+    # The name of the cloud image will be created from the name and the version.
+    name: docker
+    version: 1.0.0
+    maintainers: [Lukas Jelonek - lukas.jelonek@computational.bio.uni-giessen.de]
+
+    # The description will be used for generated websites
+    description: An ubuntu image that contains a ready to use docker daemon
+    # A list of installed tools worth mentioning.
+    # Will be used as documentation, e.g. on a homepage
+    tools: [docker]
+
+    # A list of tags to classify images.
+    tags: [server, docker]
+
+    # Information needed for the execution of diskimage-builder
+    dib:
+        # architecture of the image
+        architecture: amd64
+        # list of elements to include in the image
+        elements: [ubuntu, vm, latest-docker]
+        # package names that should be installed, -p in dib
+        packages: []
+
+    # Information needed for image deployment
+    deploy:
+        # RAM requirements in MB
+        min_ram: 512
+        # Disk requirements in GB
+        min_hd: 4
+
+Proposed CI process for gitlab
+-------------------
+
+Create .gitlab-ci.yml 
+
+::
+    before_script:
+        - git submodule sync --recursive
+        - git submodule update --init --recursive
+
+    stages:
+        - build
+
+    build:
+        stage: build
+        tags:
+            - dib
+            - cloud
+        script:
+            - dibt-build
+            - dibt-deploy
