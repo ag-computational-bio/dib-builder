@@ -41,6 +41,8 @@ contents of the config.yaml file.
 Structure an image definition
 -----------------------------
 
+.. highlight:: yaml
+
 * elements directory containing all additional elements to include into the
   diskimage builder build
 * config.yaml::
@@ -78,9 +80,8 @@ Structure an image definition
 Proposed CI process for gitlab
 -------------------
 
-Create .gitlab-ci.yml 
+.gitlab-ci.yml ::
 
-::
     before_script:
         - git submodule sync --recursive
         - git submodule update --init --recursive
