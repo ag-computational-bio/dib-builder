@@ -1,0 +1,4 @@
+pyyaml
+diskimage-builder
+python-openstackclient
+python-glanceclient
