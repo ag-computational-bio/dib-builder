@@ -58,7 +58,14 @@ def create_build_commandline(config, target):
         os.environ['ELEMENTS_PATH'] = os.getcwd() + '/elements:' + os.environ['ELEMENTS_PATH']
     else:
         os.environ['ELEMENTS_PATH'] = os.getcwd() + '/elements'
-      
+   
+  # export environment variables
+  if 'environment' in config['dib']:
+    environment = config['dib']['environment']
+    sys.stderr.write("Adding to environment: " + str(environment) + "\n")
+    for key in environment:
+      os.environ[key] = environment[key]
+ 
   os.environ["LANG"] = "en_US.UTF-8"
   return cli
 
