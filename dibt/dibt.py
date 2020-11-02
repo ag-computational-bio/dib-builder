@@ -102,7 +102,7 @@ def create_deploy_commandline(config, target):
 
 def execute_command_line(cli):
   sys.stderr.write("Executing: " + cli + "\n")
-  sys.exit(os.system(cli))
+  return os.system(cli)
 
 def _generate_default_parser():
   parser = argparse.ArgumentParser(description='Build image from configuration yaml file')
@@ -118,14 +118,21 @@ def build():
   config = readconfig(args.config)
   check_mandatory_fields(config, ['name', 'version', ['dib','architecture'], ['dib', 'elements']])
   cli = create_build_commandline(config, args.output)
-  execute_command_line(cli)
+  sys.exit(execute_command_line(cli))
 
 def deploy():
   # parse arguments
   parser = _generate_default_parser()
+  parser.add_argument('-r', '--replace', help='Replace an existing image with the same version', action='store_true')
   args = parser.parse_args()
 
   config = readconfig(args.config)
   check_mandatory_fields(config, ['name', 'version', ['deploy','min_ram'], ['deploy', 'min_hd'], 'maintainers'])
   cli = create_deploy_commandline(config, args.output)
-  execute_command_line(cli)
+  error_code = execute_command_line(cli)
+
+  if args.replace:
+    print ('TODO check for existing image')
+  else:
+    sys.exit(error_code)
+
